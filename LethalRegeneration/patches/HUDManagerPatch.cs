@@ -8,7 +8,7 @@ using LethalRegeneration.config;
 internal class HUDManagerPatch
 {
 
-    private static readonly PlayerControllerB playerControllerB = GameNetworkManager.Instance.localPlayerController;
+    private static PlayerControllerB playerControllerB;
     private static int currentTicksPerRegeneration = 0;
     private static readonly int ticksPerRegeneration = ConfigurationSync.instance.ticksPerRegeneration;
     private static readonly int regenerationPower = ConfigurationSync.instance.regenerationPower;
@@ -18,6 +18,7 @@ internal class HUDManagerPatch
     [HarmonyPostfix]
     public static void healingPostfix()
     {
+        playerControllerB = GameNetworkManager.Instance.localPlayerController;
         if (!playerControllerB.IsOwner || playerControllerB.isPlayerDead || !playerControllerB.AllowPlayerDeath() || (!regenerationOutsideShip && !playerControllerB.isInHangarShipRoom) || playerControllerB.health >= 100) return;
 
         if (currentTicksPerRegeneration == 0)

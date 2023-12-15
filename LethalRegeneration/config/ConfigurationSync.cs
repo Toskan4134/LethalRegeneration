@@ -2,6 +2,7 @@ namespace LethalRegeneration.config;
 
 using System;
 using System.IO;
+using System.Text;
 using System.Text.Json;
 using GameNetcodeStuff;
 using HarmonyLib;
@@ -19,6 +20,9 @@ public class ConfigurationSync
     public int regenerationPower;
     public int ticksPerRegeneration;
     public bool regenerationOutsideShip;
+    private const string RequestMessageName = "LethalRegenerationOnRequestConfigSync";
+    private const string ReceiveMessageName = "LethalRegenerationOnRecieveConfigSync";
+
     public static void BuildDefaultConfig()
     {
         if (defaultConfig == null)
@@ -33,20 +37,22 @@ public class ConfigurationSync
         }
         LethalRegenerationBase.mls.LogInfo("ConfigurationSync Built");
     }
+
     [HarmonyPatch(typeof(PlayerControllerB), "ConnectClientToPlayerObject")]
     [HarmonyPostfix]
     public static void InitializeLocalPlayer(PlayerControllerB __instance)
     {
+        LethalRegenerationBase.mls.LogInfo("Jugador Inicializado --------------------");
         localPlayerController = __instance;
         if (NetworkManager.Singleton.IsServer)
         {
-            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler("BetterStaminaOnRequestConfigSync", OnReceiveConfigSyncRequest);
+            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(RequestMessageName, OnReceiveConfigSyncRequest);
             OnLocalClientConfigSync();
         }
         else
         {
             isSynced = false;
-            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler("BetterStaminaOnReceiveConfigSync", OnReceiveConfigSync);
+            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(ReceiveMessageName, OnReceiveConfigSync);
             RequestConfigSync();
         }
     }
@@ -56,50 +62,70 @@ public class ConfigurationSync
         if (NetworkManager.Singleton.IsClient)
         {
             LethalRegenerationBase.mls.LogInfo("Sending config sync request to server.");
-            FastBufferWriter messageStream = new FastBufferWriter(4, Allocator.Temp);
-            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("BetterStaminaOnRequestConfigSync", 0uL, messageStream);
+            using (FastBufferWriter messageStream = new FastBufferWriter(4, Allocator.Temp))
+            {
+                NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(RequestMessageName, 0uL, messageStream);
+            }
         }
         else
         {
-            LethalRegenerationBase.mls.LogError("Failed to send config sync request.");
+            LethalRegenerationBase.mls.LogWarning("Failed to send config sync request.");
         }
     }
 
+
+
     public static void OnReceiveConfigSyncRequest(ulong clientId, FastBufferReader reader)
     {
-        if (NetworkManager.Singleton.IsServer)
+        try
         {
-            LethalRegenerationBase.mls.LogInfo("Receiving config sync request from client with id: " + clientId + ". Sending config sync to client.");
-            byte[] array = SerializeConfigToByteArray(instance);
-            FastBufferWriter messageStream = new FastBufferWriter(array.Length + 4, Allocator.Temp);
-            int value = array.Length;
-            messageStream.WriteValueSafe(in value, default);
-            messageStream.WriteBytesSafe(array);
-            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("BetterStaminaOnReceiveConfigSync", clientId, messageStream);
+            if (NetworkManager.Singleton.IsServer)
+            {
+                LethalRegenerationBase.mls.LogInfo($"Receiving config sync request from client with id: {clientId}. Sending config sync to client.");
+                byte[] array = SerializeConfigToByteArray(instance);
+                using (FastBufferWriter messageStream = new FastBufferWriter(array.Length + 4, Allocator.Temp))
+                {
+                    messageStream.WriteValueSafe(array.Length, default);
+                    messageStream.WriteBytesSafe(array);
+                    NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(ReceiveMessageName, clientId, messageStream);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            LethalRegenerationBase.mls.LogError($"Error handling config sync request: {ex.Message}");
         }
     }
 
     public static void OnReceiveConfigSync(ulong clientId, FastBufferReader reader)
     {
-        if (reader.TryBeginRead(4))
+        try
         {
-            reader.ReadValueSafe(out int value, default);
-            if (reader.TryBeginRead(value))
+            if (reader.TryBeginRead(4))
             {
+                reader.ReadValueSafe(out int value, default);
+
                 LethalRegenerationBase.mls.LogInfo("Receiving config sync from server.");
-                byte[] value2 = new byte[value];
-                reader.ReadBytesSafe(ref value2, value);
-                instance = DeserializeFromByteArray(value2);
-                OnLocalClientConfigSync();
+                if (reader.TryBeginRead(value))
+                {
+                    byte[] value2 = new byte[value];
+                    reader.ReadBytes(ref value2, value);
+                    instance = DeserializeFromByteArray(value2);
+                    OnLocalClientConfigSync();
+                }
+                else
+                {
+                    LethalRegenerationBase.mls.LogError("Error receiving sync from server.");
+                }
             }
             else
             {
-                LethalRegenerationBase.mls.LogError("Error receiving sync from server.");
+                LethalRegenerationBase.mls.LogError("Error receiving bytes length.");
             }
         }
-        else
+        catch (Exception ex)
         {
-            LethalRegenerationBase.mls.LogError("Error receiving bytes length.");
+            LethalRegenerationBase.mls.LogError($"Error handling config sync: {ex.Message}");
         }
     }
 
@@ -116,10 +142,17 @@ public class ConfigurationSync
             {
                 WriteIndented = true
             };
-            JsonSerializer.Serialize(memoryStream, config, options);
+
+            using (Utf8JsonWriter jsonWriter = new Utf8JsonWriter(memoryStream, new JsonWriterOptions { Indented = true }))
+            {
+                JsonSerializer.Serialize(jsonWriter, config, options);
+            }
+
+            LethalRegenerationBase.mls.LogError("Serializado: " + Encoding.UTF8.GetString(memoryStream.ToArray()));
             return memoryStream.ToArray();
         }
     }
+
 
     public static ConfigurationSync DeserializeFromByteArray(byte[] data)
     {
@@ -129,7 +162,12 @@ public class ConfigurationSync
             {
                 WriteIndented = true
             };
-            return JsonSerializer.Deserialize<ConfigurationSync>(memoryStream, options);
+
+            ConfigurationSync deserializedConfig = JsonSerializer.Deserialize<ConfigurationSync>(new StreamReader(memoryStream).ReadToEnd(), options);
+            LethalRegenerationBase.mls.LogError("Deserializado: " + JsonSerializer.Serialize(deserializedConfig, options));
+
+            return deserializedConfig;
         }
     }
+
 }

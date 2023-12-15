@@ -1,6 +1,6 @@
 # Lethal Regeneration
 
-Customizable natural life regeneration mod (W.I.P)
+Customizable natural health regeneration mod (W.I.P)
 
 ## Configurable Parameters
 
@@ -8,18 +8,7 @@ Customizable natural life regeneration mod (W.I.P)
 -   **Ticks Per Regen** (1 tick equals each time the minutes of the clock are changed)
 -   **Regeneration Outside Ship** (Whether health is also regenerated outside the ship or only inside)
 
-## Versions
-
-### 1.0.1
-
--   Fixed some errors
-
-### 1.0.0
-
--   First Update
--   Still W.I.P.
-
 ## Credits
 
--   Programmed by Toskan4134
--   Icon by Masshita
+-   Programmed by [Toskan4134](https://discordapp.com/users/356817504330448906)
+-   Icon by [Masshita](https://discordapp.com/users/680514575992356916)

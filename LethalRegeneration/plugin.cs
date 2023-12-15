@@ -30,6 +30,7 @@ public class LethalRegenerationBase : BaseUnityPlugin
         mls.LogInfo(modName + " Awaken");
         Configuration.SetConfig();
         harmony.PatchAll(typeof(HUDManagerPatch));
+        // harmony.PatchAll(typeof(ConfigurationSync));
     }
 
 }
