@@ -10,6 +10,10 @@ Customizable natural life regeneration mod (W.I.P)
 
 ## Versions
 
+### 1.0.1
+
+-   Fixed some errors
+
 ### 1.0.0
 
 -   First Update

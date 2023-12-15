@@ -12,7 +12,7 @@ public class LethalRegenerationBase : BaseUnityPlugin
 {
     private const string modGUID = "Toskan4134.LethalRegeneration";
     private const string modName = "LethalRegeneration";
-    private const string modVersion = "1.0.0";
+    private const string modVersion = "1.0.1";
 
     private readonly Harmony harmony = new Harmony(modGUID);
 
