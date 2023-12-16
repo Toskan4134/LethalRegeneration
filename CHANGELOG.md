@@ -1,3 +1,9 @@
+# [16-12-2023] - 1.0.3
+
+### Added
+
+-   Sync config with the host added
+
 # [15-12-2023] - 1.0.2
 
 ### Fixed

@@ -10,9 +10,9 @@ internal class HUDManagerPatch
 
     private static PlayerControllerB playerControllerB;
     private static int currentTicksPerRegeneration = 0;
-    private static readonly int ticksPerRegeneration = ConfigurationSync.instance.ticksPerRegeneration;
-    private static readonly int regenerationPower = ConfigurationSync.instance.regenerationPower;
-    private static readonly bool regenerationOutsideShip = ConfigurationSync.instance.regenerationOutsideShip;
+    private static int ticksPerRegeneration => Configuration.Instance.ticksPerRegeneration;
+    private static int regenerationPower => Configuration.Instance.regenerationPower;
+    private static bool regenerationOutsideShip => Configuration.Instance.regenerationOutsideShip;
 
     [HarmonyPatch("SetClock")]
     [HarmonyPostfix]
@@ -24,18 +24,12 @@ internal class HUDManagerPatch
         if (currentTicksPerRegeneration == 0)
         {
             currentTicksPerRegeneration = ticksPerRegeneration;
-            LethalRegenerationBase.mls.LogInfo("Healed " + regenerationPower);
+            LethalRegenerationBase.Logger.LogInfo("Healed " + regenerationPower);
             int regeneratedHealth = playerControllerB.health + regenerationPower;
             playerControllerB.health = regeneratedHealth > 100 ? 100 : regeneratedHealth;
             HUDManager.Instance.UpdateHealthUI(playerControllerB.health, false);
-            if (playerControllerB.IsServer)
-            {
-                playerControllerB.DamagePlayerClientRpc(-regenerationPower, playerControllerB.health);
-            }
-            else
-            {
-                playerControllerB.DamagePlayerServerRpc(-regenerationPower, playerControllerB.health);
-            }
+            playerControllerB.DamagePlayerClientRpc(-regenerationPower, playerControllerB.health);
+
             if (playerControllerB.health >= 10 && playerControllerB.criticallyInjured)
             {
                 playerControllerB.MakeCriticallyInjured(false);

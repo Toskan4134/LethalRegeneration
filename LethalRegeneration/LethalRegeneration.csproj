@@ -1,7 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net46</TargetFramework>
+    <AssemblyName>LethalRegeneration</AssemblyName>
+    <Description>Natural health regeneration mod with customizable parameters that syncs with host</Description>
+    <Version>1.0.3</Version>
+    <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
   </PropertyGroup>
@@ -27,5 +31,11 @@
     <Reference Include="Unity.Collections">
       <HintPath>libs\Unity.Collections.dll</HintPath>
     </Reference>
+    <Reference Include="netstandard">
+      <HintPath>libs\netstandard.dll</HintPath>
+    </Reference>
   </ItemGroup>
-</Project>
+
+<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+  <Exec Command="echo &quot;.&quot; &gt; &quot;C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\plugins\$(TargetName).dll&quot; &amp;&amp; xcopy /q /y /i &quot;$(TargetPath)&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\plugins\$(TargetName).dll&quot;" />
+</Target></Project>
