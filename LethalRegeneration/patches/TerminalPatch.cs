@@ -1,11 +1,8 @@
 namespace LethalRegeneration.patches;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using HarmonyLib;
 using LethalRegeneration.utils;
-using TerminalApi;
 using UnityEngine;
 
 [HarmonyPatch(typeof(Terminal))]
@@ -38,11 +35,6 @@ public class TerminalPatch
             LethalRegenerationBase.Logger.LogInfo((object)("Keyword " + keyword3.word + " already registed, skipping."));
         }
         int itemIndex = StartOfRound.Instance.unlockablesList.unlockables.FindIndex((UnlockableItem unlockable) => unlockable.unlockableName == item.itemName);
-        StartOfRound wah = StartOfRound.Instance;
-        if (wah == null)
-        {
-            LethalRegenerationBase.Logger.LogDebug("STARTOFROUND INSTANCE NOT FOUND");
-        }
         char lastChar = itemName[itemName.Length - 1];
         string itemNamePlural = itemName;
         TerminalNode buyNode2 = ScriptableObject.CreateInstance<TerminalNode>();
@@ -111,14 +103,6 @@ public class TerminalPatch
 
     }
 
-    [HarmonyPatch("OnSubmit")]
-    [HarmonyPrefix]
-    public static void UpdateTerminalPatch(Terminal __instance)
-    {
-        // LethalRegenerationBase.Logger.LogInfo(__instance.currentText);
-        // LethalRegenerationBase.Logger.LogInfo(__instance.currentNode.name);
-    }
-
     [HarmonyPatch("TextPostProcess")]
     [HarmonyPrefix]
     public static void TextPostProcessPatch_Prefix(ref string modifiedDisplayText, TerminalNode node, ref string __result)
@@ -130,7 +114,15 @@ public class TerminalPatch
             int unlockablePrice = item.creditsWorth;
             string newLine = $"\n* {unlockableName}    //    Price: ${unlockablePrice}";
             modifiedDisplayText = modifiedDisplayText.Insert(index + 1, newLine);
-            LethalRegenerationBase.Logger.LogInfo(modifiedDisplayText);
+            // LethalRegenerationBase.Logger.LogInfo(modifiedDisplayText);
         }
     }
+    [HarmonyPatch("LoadNewNode")]
+    [HarmonyPrefix]
+    public static void LoadNewNodePatch_Prefix(ref TerminalNode node)
+    {
+
+        LethalRegenerationBase.Logger.LogInfo(node.name);
+    }
+
 }
