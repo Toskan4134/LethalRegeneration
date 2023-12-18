@@ -34,8 +34,12 @@
     <Reference Include="netstandard">
       <HintPath>libs\netstandard.dll</HintPath>
     </Reference>
+    <Reference Include="TerminalApi">
+      <HintPath>libs\TerminalApi.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
-<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-  <Exec Command="echo &quot;.&quot; &gt; &quot;C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\plugins\$(TargetName).dll&quot; &amp;&amp; xcopy /q /y /i &quot;$(TargetPath)&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\plugins\$(TargetName).dll&quot;" />
-</Target></Project>
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="echo &quot;.&quot; &gt; &quot;C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\plugins\$(TargetName).dll&quot; &amp;&amp; xcopy /q /y /i &quot;$(TargetPath)&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Lethal Company\BepInEx\plugins\$(TargetName).dll&quot;" />
+  </Target>
+</Project>

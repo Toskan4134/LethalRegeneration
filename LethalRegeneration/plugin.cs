@@ -5,6 +5,8 @@ using BepInEx.Logging;
 using HarmonyLib;
 using LethalRegeneration.config;
 using LethalRegeneration.patches;
+using System;
+using UnityEngine;
 
 [BepInPlugin(modGUID, modName, modVersion)]
 
@@ -26,13 +28,12 @@ public class LethalRegenerationBase : BaseUnityPlugin
             Instance = this;
         }
         Logger = BepInEx.Logging.Logger.CreateLogSource(modName);
-        Logger.LogInfo(base.Config);
         Config = new(base.Config);
         try
         {
             patcher.PatchAll(typeof(HUDManagerPatch));
             patcher.PatchAll(typeof(Configuration));
-
+            patcher.PatchAll(typeof(TerminalPatch));
             Logger.LogInfo(modName + " Awaken");
         }
         catch (Exception e)
