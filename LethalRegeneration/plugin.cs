@@ -34,6 +34,8 @@ public class LethalRegenerationBase : BaseUnityPlugin
             patcher.PatchAll(typeof(HUDManagerPatch));
             patcher.PatchAll(typeof(Configuration));
             patcher.PatchAll(typeof(TerminalPatch));
+            patcher.PatchAll(typeof(GameNetworkManagerPatch));
+            patcher.PatchAll(typeof(StartOfRoundPatch));
             Logger.LogInfo(modName + " Awaken");
         }
         catch (Exception e)

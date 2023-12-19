@@ -15,4 +15,9 @@ public class TerminalUtils
         keyword.accessTerminalObjects = accessTerminalObjects;
         return keyword;
     }
+
+    public static TerminalKeyword GetTerminalKeyword(Terminal __instance, string word)
+    {
+        return __instance.terminalNodes.allKeywords.First((TerminalKeyword keyword) => keyword.word == word);
+    }
 }
