@@ -37,9 +37,6 @@
     <Reference Include="netstandard">
       <HintPath>libs\netstandard.dll</HintPath>
     </Reference>
-    <Reference Include="TerminalApi">
-      <HintPath>libs\TerminalApi.dll</HintPath>
-    </Reference>
   </ItemGroup>
 
   <Target Name="PostBuild" AfterTargets="PostBuildEvent">

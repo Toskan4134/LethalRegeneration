@@ -77,8 +77,8 @@ public class TerminalPatch
         buyNode1.isConfirmationNode = true;
         buyNode1.overrideOptions = true;
         buyNode1.itemCost = item.creditsWorth;
-        buyNode1.terminalOptions =
-        [
+        buyNode1.terminalOptions = new CompatibleNoun[2]
+        {
             new CompatibleNoun
             {
                 noun = __instance.terminalNodes.allKeywords.First((TerminalKeyword keyword2) => keyword2.word == "confirm"),
@@ -89,7 +89,7 @@ public class TerminalPatch
                 noun = __instance.terminalNodes.allKeywords.First((TerminalKeyword keyword2) => keyword2.word == "deny"),
                 result = cancelPurchaseNode
             }
-        ];
+        };
 
         List<TerminalKeyword> allKeywords = __instance.terminalNodes.allKeywords.ToList();
         allKeywords.Add(keyword3);
@@ -155,21 +155,23 @@ public class TerminalPatch
                 int finalCredits = __instance.groupCredits - item.creditsWorth;
                 __instance.SyncGroupCreditsServerRpc(finalCredits, __instance.numberOfItemsInDropship);
                 Configuration.Instance.healingUpgradeUnlocked = true;
-                Configuration.RequestSync();
+                if (Configuration.IsHost)
+                {
+                    Configuration.Instance.BroadcastHealingUpgradeStatusToClients();
+                }
+                else
+                {
+                    Configuration.Instance.SendHealingUpgradeStatusToHost();
+                }
                 break;
             case "Natural-RegenerationBuyNode1":
-                // LethalRegenerationBase.Logger.LogInfo("Objeto Procesado");
                 if (__instance.groupCredits < item.creditsWorth)
                 {
-                    // LethalRegenerationBase.Logger.LogInfo("No hay pasta");
                     node = CannotAfford;
                     return;
                 }
                 break;
         }
-        // LethalRegenerationBase.Logger.LogInfo(nodeName);
-        // LethalRegenerationBase.Logger.LogInfo(node.name);
-        // LethalRegenerationBase.Logger.LogInfo(__instance.groupCredits);
     }
 
 }
