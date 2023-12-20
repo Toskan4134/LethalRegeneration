@@ -14,12 +14,10 @@ public class GameNetworkManagerPatch
     [HarmonyPostfix]
     public static void SaveGameValuesPatch(GameNetworkManager __instance)
     {
-        LethalRegenerationBase.Logger.LogInfo("SaveGameValuesPatch GameNetwork");
         if (!__instance.isHostingGame) return;
         try
         {
-            ES3.Save("LethalRegeneration_healingUpgradeUnlocked", Configuration.Instance.healingUpgradeUnlocked, __instance.currentSaveFileName);
-            // LethalRegenerationBase.Logger.LogInfo("HealingUpgrade Saved as " + Configuration.Instance.healingUpgradeUnlocked);
+            ES3.Save("LethalRegeneration_healingUpgradeUnlocked", Configuration.Instance.HealingUpgradeUnlocked, __instance.currentSaveFileName);
         }
         catch (Exception arg)
         {

@@ -14,6 +14,6 @@ public class StartOfRoundPatch
     [HarmonyPostfix]
     public static void ResetShip()
     {
-        Configuration.Instance.healingUpgradeUnlocked = false;
+        Configuration.Instance.HealingUpgradeUnlocked = false;
     }
 }

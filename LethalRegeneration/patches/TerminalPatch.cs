@@ -21,10 +21,11 @@ public class TerminalPatch
     [HarmonyPrefix]
     public static void StartTerminalPatch(Terminal __instance)
     {
+        if (!Configuration.Instance.HealingUpgradeEnabled) return;
         item = new Item()
         {
             itemName = "Natural Regeneration",
-            creditsWorth = Configuration.Instance.healingUpgradePrice,
+            creditsWorth = Configuration.Instance.HealingUpgradePrice,
             saveItemVariable = true,
         };
 
@@ -45,7 +46,6 @@ public class TerminalPatch
         AlreadyUnlocked.playSyncedClip = 1;
 
         TerminalKeyword infoKeyword = TerminalUtils.GetTerminalKeyword(__instance, "info");
-        LethalRegenerationBase.Logger.LogInfo($"Adding item to terminal");
         string itemName = item.itemName;
         TerminalKeyword keyword3 = TerminalUtils.CreateTerminalKeyword(itemName.ToLowerInvariant().Replace(" ", "-"), isVerb: false, null, null, buyKeyword);
         if (__instance.terminalNodes.allKeywords.Any((TerminalKeyword kw) => kw.word == keyword3.word))
@@ -103,7 +103,7 @@ public class TerminalPatch
         buyKeyword.compatibleNouns = nouns.ToArray();
         TerminalNode itemInfo = ScriptableObject.CreateInstance<TerminalNode>();
         itemInfo.name = "LethalRegeneration_" + itemName.Replace(" ", "-") + "InfoNode";
-        itemInfo.displayText = "Healsalotlol\n\n";
+        itemInfo.displayText = $"Your health regenerates inside {(Configuration.Instance.RegenerationOutsideShip ? "and outside" : "")} the ship\nThe healing is activated each {Configuration.Instance.TicksPerRegeneration} ticks\nThe healing power is {Configuration.Instance.RegenerationPower}hp per tick\n\n";
         itemInfo.clearPreviousText = true;
         itemInfo.maxCharactersToType = 25;
 
@@ -115,7 +115,7 @@ public class TerminalPatch
             result = itemInfo
         });
         infoKeyword.compatibleNouns = itemInfoNouns.ToArray();
-        LethalRegenerationBase.Logger.LogInfo("Registered item :)");
+        LethalRegenerationBase.Logger.LogInfo("Registered " + itemName);
 
     }
 
@@ -123,6 +123,7 @@ public class TerminalPatch
     [HarmonyPrefix]
     public static void TextPostProcessPatch_Prefix(ref string modifiedDisplayText, TerminalNode node, ref string __result)
     {
+        if (!Configuration.Instance.HealingUpgradeEnabled) return;
         if (modifiedDisplayText.Contains("[buyableItemsList]") && modifiedDisplayText.Contains("[unlockablesSelectionList]"))
         {
             int index = modifiedDisplayText.IndexOf(":");
@@ -130,7 +131,6 @@ public class TerminalPatch
             int unlockablePrice = item.creditsWorth;
             string newLine = $"\n* {unlockableName}    //    Price: ${unlockablePrice}";
             modifiedDisplayText = modifiedDisplayText.Insert(index + 1, newLine);
-            // LethalRegenerationBase.Logger.LogInfo(modifiedDisplayText);
         }
     }
     [HarmonyPatch("LoadNewNode")]
@@ -142,19 +142,15 @@ public class TerminalPatch
         switch (nodeName)
         {
             case "Natural-RegenerationBuyNode2":
-                // LethalRegenerationBase.Logger.LogInfo("Objeto Comprado");
-                if (Configuration.Instance.healingUpgradeUnlocked)
+                if (Configuration.Instance.HealingUpgradeUnlocked)
                 {
-                    // LethalRegenerationBase.Logger.LogInfo("Objeto ya desbloqueado");
                     node = AlreadyUnlocked;
                     return;
                 }
-                // TODO: On host buy, sync clients
-                // TODO: On client buy, change host and sync clients
-
                 int finalCredits = __instance.groupCredits - item.creditsWorth;
                 __instance.SyncGroupCreditsServerRpc(finalCredits, __instance.numberOfItemsInDropship);
-                Configuration.Instance.healingUpgradeUnlocked = true;
+                Configuration.Instance.HealingUpgradeUnlocked = true;
+                Configuration.Synced = false;
                 if (Configuration.IsHost)
                 {
                     Configuration.Instance.BroadcastHealingUpgradeStatusToClients();
