@@ -34,7 +34,7 @@ Customizable natural health regeneration mod that syncs with host
 ### Upgrade Price
 
 -   **Default Value**: 800
--   **Description**: If the value is true, in order to regenerate life you must buy a ship upgrade.
+-   **Description**: Cost of ship upgrade.
 -   **Valid Values**: More than 0
 
 ## Credits
