@@ -4,7 +4,7 @@
     <TargetFramework>net46</TargetFramework>
     <AssemblyName>LethalRegeneration</AssemblyName>
     <Description>Natural health regeneration mod with customizable parameters that syncs with host</Description>
-    <Version>1.0.4</Version>
+    <Version>1.1.0</Version>
     <LangVersion>latest</LangVersion>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
