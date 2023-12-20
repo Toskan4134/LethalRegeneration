@@ -1,3 +1,9 @@
+# [20-12-2023] - 1.0.4
+
+### Added
+
+-   Buy ship upgrade option to make health regeneration work added
+
 # [16-12-2023] - 1.0.3
 
 ### Added

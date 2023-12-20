@@ -1,9 +1,6 @@
 namespace LethalRegeneration.patches;
-using System.Collections.Generic;
-using System.Linq;
 using HarmonyLib;
 using LethalRegeneration.config;
-using LethalRegeneration.utils;
 using UnityEngine;
 
 [HarmonyPatch(typeof(GameNetworkManager))]

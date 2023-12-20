@@ -6,7 +6,6 @@ using Unity.Collections;
 using System;
 using HarmonyLib;
 using GameNetcodeStuff;
-using System.Reflection;
 
 [Serializable]
 public class Configuration : ConfigurationSync<Configuration>
@@ -37,12 +36,15 @@ public class Configuration : ConfigurationSync<Configuration>
 
     private void InitConfigEntries()
     {
-        RegenerationPower = NewEntry("Values", "Regeneration Power", DefaultRegenerationPower, "Amount of life regenerated each time triggered (Between 0 an 100)");
+        RegenerationPower = NewEntry("Values", "Regeneration Power", DefaultRegenerationPower, "Amount of life regenerated each time triggered (Between 1 an 100)");
         TicksPerRegeneration = NewEntry("Values", "Ticks Per Regeneration", DefaultTicksPerRegeneration, "Number of ticks until the regeneration is triggered (1 tick equals each time the minutes of the clock are changed)");
         RegenerationOutsideShip = NewEntry("Values", "Regeneration Outside Ship", DefaultregenerationOutsideShip, "Whether health is regenerated also outside the ship or only inside.");
         HealingUpgradeEnabled = NewEntry("Values", "Regeneration As Upgrade", DefaultHealingUpgradeEnabled, "Makes natural health regeneration an upgrade for the ship and has to be purchased to make it work.");
         HealingUpgradePrice = NewEntry("Values", "Upgrade Price", DefaultHealingUpgradePrice, "Changes the price of ship upgrade for health regeneration. Only works if ship upgrade is enabled");
 
+        RegenerationPower = 100 >= RegenerationPower && RegenerationPower > 0 ? RegenerationPower : DefaultRegenerationPower;
+        TicksPerRegeneration = TicksPerRegeneration > 0 ? TicksPerRegeneration : DefaultTicksPerRegeneration;
+        HealingUpgradePrice = HealingUpgradePrice > 0 ? HealingUpgradePrice : DefaultHealingUpgradePrice;
     }
     private T NewEntry<T>(string category, string key, T defaultVal, string desc)
     {

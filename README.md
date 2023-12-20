@@ -1,12 +1,41 @@
 # Lethal Regeneration
 
-Customizable natural health regeneration mod that syncs with host (W.I.P)
+Customizable natural health regeneration mod that syncs with host
 
 ## Configurable Parameters
 
--   **Regen Power** (Between 0 and 100)
--   **Ticks Per Regen** (1 tick equals each time the minutes of the clock are changed)
--   **Regeneration Outside Ship** (Whether health is also regenerated outside the ship or only inside)
+> [!NOTE]  
+> Any invalid value will be replaced by the default value.
+
+### Regen Power
+
+-   **Default Value**: 5
+-   **Description**: Amount of health points that are regenerated per tick.
+-   **Valid Values**: Between 1 and 100
+
+### Ticks Per Regeneration
+
+-   **Default Value**: 2
+-   **Description**: Interval of ticks that elapses since healing (1 tick equals each time the clock changes time).
+-   **Valid Values**: More than 0
+
+### Regeneration Outside Ship
+
+-   **Default Value**: False
+-   **Description**: If the value is true, health regeneration will also be outside the ship, since by default it is activated inside.
+-   **Valid Values**: True or False
+
+### Regeneration As Upgrade
+
+-   **Default Value**: False
+-   **Description**: If the value is true, in order to regenerate life you must buy a ship upgrade.
+-   **Valid Values**: True or False
+
+### Upgrade Price
+
+-   **Default Value**: 800
+-   **Description**: If the value is true, in order to regenerate life you must buy a ship upgrade.
+-   **Valid Values**: More than 0
 
 ## Credits
 
