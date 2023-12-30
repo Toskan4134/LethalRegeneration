@@ -2,7 +2,7 @@
 
 ### Fixed
 
--   The healing limit depends on the maximum life at the start of a round, making possible the compatibility with mods.
+-   The healing limit depends on the maximum health at the start of a round, making possible the compatibility with mods.
 
 # [20-12-2023] - 1.1.0
 

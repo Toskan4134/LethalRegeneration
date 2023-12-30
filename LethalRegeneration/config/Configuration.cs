@@ -36,7 +36,7 @@ public class Configuration : ConfigurationSync<Configuration>
 
     private void InitConfigEntries()
     {
-        RegenerationPower = NewEntry("Values", "Regeneration Power", DefaultRegenerationPower, "Amount of life regenerated each time triggered (Between 1 an 100)");
+        RegenerationPower = NewEntry("Values", "Regeneration Power", DefaultRegenerationPower, "Amount of health regenerated each time triggered (Between 1 an 100)");
         TicksPerRegeneration = NewEntry("Values", "Ticks Per Regeneration", DefaultTicksPerRegeneration, "Number of ticks until the regeneration is triggered (1 tick equals each time the minutes of the clock are changed)");
         RegenerationOutsideShip = NewEntry("Values", "Regeneration Outside Ship", DefaultregenerationOutsideShip, "Whether health is regenerated also outside the ship or only inside.");
         HealingUpgradeEnabled = NewEntry("Values", "Regeneration As Upgrade", DefaultHealingUpgradeEnabled, "Makes natural health regeneration an upgrade for the ship and has to be purchased to make it work.");

@@ -28,7 +28,7 @@ Customizable natural health regeneration mod that syncs with host
 ### Regeneration As Upgrade
 
 -   **Default Value**: False
--   **Description**: If the value is true, in order to regenerate life you must buy a ship upgrade.
+-   **Description**: If the value is true, in order to regenerate health you must buy a ship upgrade.
 -   **Valid Values**: True or False
 
 ### Upgrade Price
