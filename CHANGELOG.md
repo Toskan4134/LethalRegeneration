@@ -1,3 +1,13 @@
+# [30-12-2023] - 1.2.0
+
+### Added
+
+-   Customizable values for health regeneration outside the ship (Regenration Power & Ticks Per Regeneration)
+
+### Fixed
+
+-   Healing limit fixed on non-host clients
+
 # [30-12-2023] - 1.1.1
 
 ### Fixed

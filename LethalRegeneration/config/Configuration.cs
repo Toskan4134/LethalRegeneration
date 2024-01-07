@@ -49,6 +49,8 @@ public class Configuration : ConfigurationSync<Configuration>
 
         RegenerationPower = 100 >= RegenerationPower && RegenerationPower > 0 ? RegenerationPower : DefaultRegenerationPower;
         TicksPerRegeneration = TicksPerRegeneration > 0 ? TicksPerRegeneration : DefaultTicksPerRegeneration;
+        RegenerationPowerOutsideShip = 100 >= RegenerationPowerOutsideShip && RegenerationPowerOutsideShip > 0 ? RegenerationPowerOutsideShip : DefaultRegenerationPower;
+        TicksPerRegenerationOutsideShip = TicksPerRegenerationOutsideShip > 0 ? TicksPerRegenerationOutsideShip : DefaultTicksPerRegeneration;
         HealingUpgradePrice = HealingUpgradePrice > 0 ? HealingUpgradePrice : DefaultHealingUpgradePrice;
     }
     private T NewEntry<T>(string category, string key, T defaultVal, string desc)
