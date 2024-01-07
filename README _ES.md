@@ -4,7 +4,7 @@ Mod personalizable de regeneración natural de la salud que se sincroniza con el
 
 ## Parámetros
 
-> [!NOTA]  
+> [!NOTE]  
 > Cualquier valor inválido será reemplazado por el valor por defecto.
 
 ### Poder de Regeneración
