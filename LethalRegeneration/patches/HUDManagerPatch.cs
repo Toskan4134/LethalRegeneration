@@ -10,12 +10,15 @@ internal class HUDManagerPatch
 
     private static PlayerControllerB playerControllerB;
     private static int currentTicksPerRegeneration = 0;
+    private static int currentTicksPerRegenerationOutsideShip = 0;
     private static int ticksPerRegeneration => Configuration.Instance.TicksPerRegeneration;
     private static int regenerationPower => Configuration.Instance.RegenerationPower;
     private static bool regenerationOutsideShip => Configuration.Instance.RegenerationOutsideShip;
+    private static int ticksPerRegenerationOutsideShip => Configuration.Instance.TicksPerRegenerationOutsideShip;
+    private static int regenerationPowerOutsideShip => Configuration.Instance.RegenerationPowerOutsideShip;
     private static bool healingUpgradeUnlocked => Configuration.Instance.HealingUpgradeUnlocked;
     private static bool healingUpgradeEnabled => Configuration.Instance.HealingUpgradeEnabled;
-    private static int maxHealth => StartOfRoundPatch.maxHealth;
+    private static int maxHealth => StartMatchLeverPatch.maxHealth;
 
     [HarmonyPatch("SetClock")]
     [HarmonyPostfix]
@@ -24,22 +27,42 @@ internal class HUDManagerPatch
 
         playerControllerB = GameNetworkManager.Instance.localPlayerController;
         if (healingUpgradeEnabled && !healingUpgradeUnlocked) return;
-        if (!playerControllerB.IsOwner || playerControllerB.isPlayerDead || !playerControllerB.AllowPlayerDeath() || (!regenerationOutsideShip && !playerControllerB.isInHangarShipRoom) || playerControllerB.health >= maxHealth) return;
-
-        if (currentTicksPerRegeneration == 0)
+        if (!playerControllerB.IsOwner || playerControllerB.isPlayerDead || !playerControllerB.AllowPlayerDeath() || playerControllerB.health >= maxHealth) return;
+        if (playerControllerB.isInHangarShipRoom)
         {
-            currentTicksPerRegeneration = ticksPerRegeneration;
-            LethalRegenerationBase.Logger.LogInfo("Healed " + regenerationPower);
-            int regeneratedHealth = playerControllerB.health + regenerationPower;
-            playerControllerB.health = regeneratedHealth > maxHealth ? maxHealth : regeneratedHealth;
-            HUDManager.Instance.UpdateHealthUI(playerControllerB.health, false);
-            playerControllerB.DamagePlayerClientRpc(-regenerationPower, playerControllerB.health);
-
-            if (playerControllerB.health >= 10 && playerControllerB.criticallyInjured)
+            if (currentTicksPerRegeneration == 0)
             {
-                playerControllerB.MakeCriticallyInjured(false);
+                currentTicksPerRegeneration = ticksPerRegeneration;
+                LethalRegenerationBase.Logger.LogInfo("Healed " + regenerationPower);
+                int regeneratedHealth = playerControllerB.health + regenerationPower;
+                playerControllerB.health = regeneratedHealth > maxHealth ? maxHealth : regeneratedHealth;
+                HUDManager.Instance.UpdateHealthUI(playerControllerB.health, false);
+                playerControllerB.DamagePlayerClientRpc(-regenerationPower, playerControllerB.health);
+
+                if (playerControllerB.health >= 10 && playerControllerB.criticallyInjured)
+                {
+                    playerControllerB.MakeCriticallyInjured(false);
+                }
             }
+            currentTicksPerRegeneration--;
         }
-        currentTicksPerRegeneration--;
+        else if (regenerationOutsideShip && !playerControllerB.isInHangarShipRoom)
+        {
+            if (currentTicksPerRegenerationOutsideShip == 0)
+            {
+                currentTicksPerRegenerationOutsideShip = ticksPerRegenerationOutsideShip;
+                LethalRegenerationBase.Logger.LogInfo("Healed " + regenerationPowerOutsideShip);
+                int regeneratedHealth = playerControllerB.health + regenerationPowerOutsideShip;
+                playerControllerB.health = regeneratedHealth > maxHealth ? maxHealth : regeneratedHealth;
+                HUDManager.Instance.UpdateHealthUI(playerControllerB.health, false);
+                playerControllerB.DamagePlayerClientRpc(-regenerationPowerOutsideShip, playerControllerB.health);
+
+                if (playerControllerB.health >= 10 && playerControllerB.criticallyInjured)
+                {
+                    playerControllerB.MakeCriticallyInjured(false);
+                }
+            }
+            currentTicksPerRegenerationOutsideShip--;
+        }
     }
 }

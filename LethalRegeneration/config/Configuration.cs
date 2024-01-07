@@ -19,6 +19,8 @@ public class Configuration : ConfigurationSync<Configuration>
     public int TicksPerRegeneration { get; private set; }
     public int RegenerationPower { get; private set; }
     public bool RegenerationOutsideShip { get; private set; }
+    public int TicksPerRegenerationOutsideShip { get; private set; }
+    public int RegenerationPowerOutsideShip { get; private set; }
     public bool HealingUpgradeEnabled { get; private set; }
     public int HealingUpgradePrice { get; private set; }
 
@@ -36,9 +38,12 @@ public class Configuration : ConfigurationSync<Configuration>
 
     private void InitConfigEntries()
     {
-        RegenerationPower = NewEntry("Values", "Regeneration Power", DefaultRegenerationPower, "Amount of health regenerated each time triggered (Between 1 an 100)");
-        TicksPerRegeneration = NewEntry("Values", "Ticks Per Regeneration", DefaultTicksPerRegeneration, "Number of ticks until the regeneration is triggered (1 tick equals each time the minutes of the clock are changed)");
-        RegenerationOutsideShip = NewEntry("Values", "Regeneration Outside Ship", DefaultregenerationOutsideShip, "Whether health is regenerated also outside the ship or only inside.");
+        RegenerationPower = NewEntry("Values", "Regeneration Power", DefaultRegenerationPower, "Amount of health regenerated INSIDE the ship each time triggered (Between 1 an 100)");
+        TicksPerRegeneration = NewEntry("Values", "Ticks Per Regeneration", DefaultTicksPerRegeneration, "Number of ticks until the regeneration is triggered INSIDE the ship (1 tick equals each time the minutes of the clock are changed)");
+        RegenerationOutsideShip = NewEntry("Values", "Enable Regeneration Outside Ship", DefaultregenerationOutsideShip, "Whether health is regenerated also outside the ship or only inside.");
+        RegenerationPowerOutsideShip = NewEntry("Values", "Regeneration Power Outside Ship", DefaultRegenerationPower, "Amount of health regenerated OUTSIDE the ship each time triggered, requires Regeneration Outside The Ship enabled (Between 1 an 100)");
+        TicksPerRegenerationOutsideShip = NewEntry("Values", "Ticks Per Regeneration Outside Ship", DefaultTicksPerRegeneration, "Number of ticks until the regeneration is triggered OUTSIDE the ship, requires Regeneration Outside The Ship enabled (1 tick equals each time the minutes of the clock are changed)");
+
         HealingUpgradeEnabled = NewEntry("Values", "Regeneration As Upgrade", DefaultHealingUpgradeEnabled, "Makes natural health regeneration an upgrade for the ship and has to be purchased to make it work.");
         HealingUpgradePrice = NewEntry("Values", "Upgrade Price", DefaultHealingUpgradePrice, "Changes the price of ship upgrade for health regeneration. Only works if ship upgrade is enabled");
 

@@ -13,7 +13,7 @@ public class LethalRegenerationBase : BaseUnityPlugin
 {
     private const string modGUID = "Toskan4134.LethalRegeneration";
     private const string modName = "LethalRegeneration";
-    private const string modVersion = "1.1.1";
+    private const string modVersion = "1.2.0";
 
     private readonly Harmony patcher = new Harmony(modGUID);
     public static new Configuration Config { get; internal set; }
@@ -35,6 +35,7 @@ public class LethalRegenerationBase : BaseUnityPlugin
             patcher.PatchAll(typeof(TerminalPatch));
             patcher.PatchAll(typeof(GameNetworkManagerPatch));
             patcher.PatchAll(typeof(StartOfRoundPatch));
+            patcher.PatchAll(typeof(StartMatchLeverPatch));
             Logger.LogInfo(
 @"Loaded Succesfully
       ___________________
@@ -48,7 +49,7 @@ public class LethalRegenerationBase : BaseUnityPlugin
     |   |__ |    | __|   |
     |      ||    ||      |
      \_____||____||_____/
-      LethalRegeneration
+   LethalRegeneration 1.2.0
         By Toskan4134
 "
     );

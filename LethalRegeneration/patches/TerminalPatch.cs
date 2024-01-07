@@ -50,7 +50,7 @@ public class TerminalPatch
         TerminalKeyword keyword3 = TerminalUtils.CreateTerminalKeyword(itemName.ToLowerInvariant().Replace(" ", "-"), isVerb: false, null, null, buyKeyword);
         if (__instance.terminalNodes.allKeywords.Any((TerminalKeyword kw) => kw.word == keyword3.word))
         {
-            LethalRegenerationBase.Logger.LogInfo((object)("Keyword " + keyword3.word + " already registed, skipping."));
+            LethalRegenerationBase.Logger.LogInfo("Keyword " + keyword3.word + " already registed, skipping.");
         }
         int itemIndex = StartOfRound.Instance.unlockablesList.unlockables.FindIndex((UnlockableItem unlockable) => unlockable.unlockableName == item.itemName);
         buyNode2 = ScriptableObject.CreateInstance<TerminalNode>();
@@ -103,7 +103,15 @@ public class TerminalPatch
         buyKeyword.compatibleNouns = nouns.ToArray();
         TerminalNode itemInfo = ScriptableObject.CreateInstance<TerminalNode>();
         itemInfo.name = "LethalRegeneration_" + itemName.Replace(" ", "-") + "InfoNode";
-        itemInfo.displayText = $"Your health regenerates inside {(Configuration.Instance.RegenerationOutsideShip ? "and outside" : "")} the ship\nThe healing is activated each {Configuration.Instance.TicksPerRegeneration} ticks\nThe healing power is {Configuration.Instance.RegenerationPower}hp per tick\n\n";
+        if (Configuration.Instance.RegenerationOutsideShip)
+        {
+            itemInfo.displayText = $"Your health regenerates inside and outside the ship\n\nINSIDE THE SHIP\nThe healing is activated each {Configuration.Instance.TicksPerRegeneration} ticks\nThe healing power is {Configuration.Instance.RegenerationPower}hp per tick\n\nOUTSIDE THE SHIP\nThe healing is activated each {Configuration.Instance.TicksPerRegenerationOutsideShip} ticks\nThe healing power is {Configuration.Instance.RegenerationPowerOutsideShip}hp per tick\n\n";
+        }
+        else
+        {
+            itemInfo.displayText = $"Your health regenerates only inside the ship\n\nThe healing is activated each {Configuration.Instance.TicksPerRegeneration} ticks\nThe healing power is {Configuration.Instance.RegenerationPower}hp per tick\n\n";
+
+        }
         itemInfo.clearPreviousText = true;
         itemInfo.maxCharactersToType = 25;
 
