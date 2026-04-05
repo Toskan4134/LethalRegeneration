@@ -1,10 +1,9 @@
-namespace LethalRegeneration.patches;
-using System.Collections.Generic;
-using System.Linq;
 using HarmonyLib;
 using LethalRegeneration.config;
 using LethalRegeneration.utils;
 using UnityEngine;
+
+namespace LethalRegeneration.patches;
 
 [HarmonyPatch(typeof(Terminal))]
 public class TerminalPatch
@@ -16,6 +15,12 @@ public class TerminalPatch
     private static TerminalNode CannotAfford;
     private static TerminalNode AlreadyUnlocked;
 
+    private static CompatibleNoun CreateCompatibleNoun()
+    {
+        var type = typeof(CompatibleNoun);
+        var instance = (CompatibleNoun)System.Runtime.Serialization.FormatterServices.GetUninitializedObject(type);
+        return instance;
+    }
 
     [HarmonyPatch("Start")]
     [HarmonyPrefix]
@@ -77,29 +82,22 @@ public class TerminalPatch
         buyNode1.isConfirmationNode = true;
         buyNode1.overrideOptions = true;
         buyNode1.itemCost = item.creditsWorth;
-        buyNode1.terminalOptions = new CompatibleNoun[2]
-        {
-            new CompatibleNoun
-            {
-                noun = __instance.terminalNodes.allKeywords.First((TerminalKeyword keyword2) => keyword2.word == "confirm"),
-                result = buyNode2
-            },
-            new CompatibleNoun
-            {
-                noun = __instance.terminalNodes.allKeywords.First((TerminalKeyword keyword2) => keyword2.word == "deny"),
-                result = cancelPurchaseNode
-            }
-        };
+        var confirmNoun = CreateCompatibleNoun();
+        confirmNoun.noun = __instance.terminalNodes.allKeywords.First((TerminalKeyword keyword2) => keyword2.word == "confirm");
+        confirmNoun.result = buyNode2;
+        var denyNoun = CreateCompatibleNoun();
+        denyNoun.noun = __instance.terminalNodes.allKeywords.First((TerminalKeyword keyword2) => keyword2.word == "deny");
+        denyNoun.result = cancelPurchaseNode;
+        buyNode1.terminalOptions = new CompatibleNoun[2] { confirmNoun, denyNoun };
 
         List<TerminalKeyword> allKeywords = __instance.terminalNodes.allKeywords.ToList();
         allKeywords.Add(keyword3);
         __instance.terminalNodes.allKeywords = allKeywords.ToArray();
         List<CompatibleNoun> nouns = buyKeyword.compatibleNouns.ToList();
-        nouns.Add(new CompatibleNoun
-        {
-            noun = keyword3,
-            result = buyNode1
-        });
+        var cn = CreateCompatibleNoun();
+        cn.noun = keyword3;
+        cn.result = buyNode1;
+        nouns.Add(cn);
         buyKeyword.compatibleNouns = nouns.ToArray();
         TerminalNode itemInfo = ScriptableObject.CreateInstance<TerminalNode>();
         itemInfo.name = "LethalRegeneration_" + itemName.Replace(" ", "-") + "InfoNode";
@@ -117,11 +115,10 @@ public class TerminalPatch
 
         __instance.terminalNodes.allKeywords = allKeywords.ToArray();
         List<CompatibleNoun> itemInfoNouns = infoKeyword.compatibleNouns.ToList();
-        itemInfoNouns.Add(new CompatibleNoun
-        {
-            noun = keyword3,
-            result = itemInfo
-        });
+        var cn2 = CreateCompatibleNoun();
+        cn2.noun = keyword3;
+        cn2.result = itemInfo;
+        itemInfoNouns.Add(cn2);
         infoKeyword.compatibleNouns = itemInfoNouns.ToArray();
         LethalRegenerationBase.Logger.LogInfo("Registered " + itemName);
 
